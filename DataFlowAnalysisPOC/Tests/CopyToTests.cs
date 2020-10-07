@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using NUnit.Framework;
 
-namespace DataFlowAnalysisPOC
+namespace DataFlowAnalysisPOC.Tests
 {
     public class CopyToTests
     {
