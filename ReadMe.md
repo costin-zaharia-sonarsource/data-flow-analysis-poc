@@ -24,6 +24,12 @@ In this case it will compute that `c1` and `c2` have identical `CopyAbstractValu
 
 According to documentation, **CopyAnalysis** is currently off by default for all analyzers as it has known performance issues and needs performance tuning. It can be enabled by end users with **editorconfig** option **copy_analysis**.
 
+## Property Set Analysis
+
+Dataflow analysis to track values assigned to one or more properties of an object to identify and flag incorrect/insecure object state.
+
+Currently the API is internal and cannot be used outside `roslyn-analyzers`.
+
 ## References
 
 [Well-known flow analyses](https://github.com/dotnet/roslyn-analyzers/blob/master/docs/Writing%20dataflow%20analysis%20based%20analyzers.md#well-known-flow-analyses)
