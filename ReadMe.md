@@ -24,6 +24,30 @@ In this case it will compute that `c1` and `c2` have identical `CopyAbstractValu
 
 According to documentation, **CopyAnalysis** is currently off by default for all analyzers as it has known performance issues and needs performance tuning. It can be enabled by end users with **editorconfig** option **copy_analysis**.
 
+## Points-To Analysis (a.k.a. alias analysis or pointer analysis)
+
+PointsToAnalysis: Dataflow analysis to track locations pointed to by AnalysisEntity and IOperation instances. This is the most commonly used dataflow analysis in all our flow based analyzers/analyses. 
+
+- `AnalysisEntity` - an `ISymbol` OR one or more `AbstractIndex` indices to index into the parent entity OR "this" instance OR An allocation or an object creation. Each `AnalysisEntity` has a type and an InstanceLocation.
+- `IOperation` - Root type for representing the abstract semantics of C# and VB statements and expressions [source](https://github.com/dotnet/roslyn/blob/version-2.9.0/src/Compilers/Core/Portable/Operations/IOperation.cs). 2.6.1 is the recommended minimum version with first fully supported IOperation release [source](https://github.com/dotnet/roslyn/issues/19014#issuecomment-418149014).
+
+### Example
+
+```
+var x = new MyClass();
+object y = x;
+var z = flag ? new MyClass() : y;
+```
+**PointsToAnalysis** will compute that variables `x` and `y` have identical non-null `PointsToAbstractValue`, which contains a single `AbstractLocation` corresponding to the first `IObjectCreationOperation` for `new MyClass()`.
+
+Variable `z` has a different `PointsToAbstractValue`, which is guaranteed to be non-null, but has two potential `AbstractLocation`, one for each `IObjectCreationOperation` in the above code.
+
+### Usage details
+
+From my tests, you get a `PointsToAbstractValue` for a given `IOperation` (interesting `IOperations` would be `LocalReference`, `ParameterReference`, `FieldReference`, `PropertyReference` etc).
+The `PointsToAbstractValue` has a list of `AbstractLocations`. Inside the locations, the interesting information seems to be in the `AnalysisEntityOpt` which has the `Symbol`; or `CreationOpt` which points to the creation of an object.
+It can also tell whether the value is Null.
+
 ## Property Set Analysis
 
 Dataflow analysis to track values assigned to one or more properties of an object to identify and flag incorrect/insecure object state.
