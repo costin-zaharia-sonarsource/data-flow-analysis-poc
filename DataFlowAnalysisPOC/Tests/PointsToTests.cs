@@ -1,6 +1,6 @@
-using System;
 using System.Threading.Tasks;
 using DataFlowAnalysisPOC.Analyzers;
+using DataFlowAnalysisPOC.Tests.Extensions;
 using DataFlowAnalysisPOC.Tests.Utils;
 using NUnit.Framework;
 
@@ -34,12 +34,8 @@ namespace TestCases
     public class One {}
     public class Two : One {}
 }";
-            var compilation = CompilationBuilder.Create(code, new PointsToAnalyzer());
-
-            foreach (var diagnostic in await compilation.GetAllDiagnosticsAsync())
-            {
-                Console.WriteLine(diagnostic.GetMessage());
-            }
+            await CompilationBuilder.Create(code, new PointsToAnalyzer())
+                                    .PrintDiagnostics();
         }
 
         [Test]
@@ -66,12 +62,8 @@ namespace TestCases
         public void Bar(Clazz x) {}
     }
 }";
-            var compilation = CompilationBuilder.Create(code, new PointsToAnalyzer());
-
-            foreach (var diagnostic in await compilation.GetAllDiagnosticsAsync())
-            {
-                Console.WriteLine(diagnostic.GetMessage());
-            }
+            await CompilationBuilder.Create(code, new PointsToAnalyzer())
+                                    .PrintDiagnostics();
         }
 
         [Test]
@@ -97,12 +89,8 @@ namespace TestCases
         public void Foo(Clazz x) {}
     }
 }";
-            var compilation = CompilationBuilder.Create(code, new PointsToAnalyzer());
-
-            foreach (var diagnostic in await compilation.GetAllDiagnosticsAsync())
-            {
-                Console.WriteLine(diagnostic.GetMessage());
-            }
+            await CompilationBuilder.Create(code, new PointsToAnalyzer())
+                                    .PrintDiagnostics();
         }
 
         [Test]
@@ -124,12 +112,8 @@ namespace TestCases
         public void Bar(int x) {}
     }
 }";
-            var compilation = CompilationBuilder.Create(code, new PointsToAnalyzer());
-
-            foreach (var diagnostic in await compilation.GetAllDiagnosticsAsync())
-            {
-                Console.WriteLine(diagnostic.GetMessage());
-            }
+            await CompilationBuilder.Create(code, new PointsToAnalyzer())
+                                    .PrintDiagnostics();
         }
     }
 }

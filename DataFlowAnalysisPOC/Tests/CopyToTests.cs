@@ -1,6 +1,6 @@
-using System;
 using System.Threading.Tasks;
 using DataFlowAnalysisPOC.Analyzers;
+using DataFlowAnalysisPOC.Tests.Extensions;
 using DataFlowAnalysisPOC.Tests.Utils;
 using NUnit.Framework;
 
@@ -30,12 +30,8 @@ namespace TestCases
         }
     }
 }";
-            var compilation = CompilationBuilder.Create(code, new CopyAnalyzer());
-
-            foreach (var diagnostic in await compilation.GetAllDiagnosticsAsync())
-            {
-                Console.WriteLine(diagnostic.GetMessage());
-            }
+            await CompilationBuilder.Create(code, new CopyAnalyzer())
+                                    .PrintDiagnostics();
         }
     }
 }
