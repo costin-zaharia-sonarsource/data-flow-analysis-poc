@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities;
+using DataFlowAnalysisPOC.Analyzers.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.FlowAnalysis;
@@ -53,7 +54,7 @@ namespace DataFlowAnalysisPOC.Analyzers
                                                                      interproceduralAnalysisConfig,
                                                                      null);
 
-                foreach (var operation in GetOperations(cfg))
+                foreach (var operation in cfg.GetOperations())
                 {
                     var operationCopyResult = copyResults?[operation];
                     if (operationCopyResult?.AnalysisEntities.Count > 1)
@@ -67,10 +68,6 @@ namespace DataFlowAnalysisPOC.Analyzers
 
             }, OperationKind.MethodBody);
         }
-
-        private static IEnumerable<IOperation> GetOperations(ControlFlowGraph controlFlowGraph) =>
-            controlFlowGraph.Blocks
-                            .SelectMany(block => block.Operations.SelectMany(operation => operation.DescendantsAndSelf()));
 
         private static string ToString(CopyAbstractValue copyAbstractValue)
         {

@@ -3,6 +3,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using Analyzer.Utilities;
+using DataFlowAnalysisPOC.Analyzers.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.FlowAnalysis;
@@ -142,7 +143,7 @@ namespace DataFlowAnalysisPOC.Analyzers
         private static Dictionary<AbstractLocation, IList<IOperation>> MapLocationToListOfOperations(ControlFlowGraph cfg, PointsToAnalysisResult pointsToAnalysisResult)
         {
             var operationsToLocation = new Dictionary<AbstractLocation, IList<IOperation>>();
-            var operationList = GetOperations(cfg).ToList(); // useful to inspect when debugging
+            var operationList = cfg.GetOperations().ToList(); // useful to inspect when debugging
             foreach (var operation in operationList)
             {
                 var pointsToAbstractValue = pointsToAnalysisResult[operation.Kind, operation.Syntax];
@@ -162,11 +163,5 @@ namespace DataFlowAnalysisPOC.Analyzers
 
             return operationsToLocation;
         }
-
-        private static IEnumerable<IOperation> GetOperations(ControlFlowGraph controlFlowGraph) =>
-            controlFlowGraph.Blocks
-                            .SelectMany(block => block.Operations.SelectMany(operation => operation.DescendantsAndSelf()));
-
-
     }
 }
