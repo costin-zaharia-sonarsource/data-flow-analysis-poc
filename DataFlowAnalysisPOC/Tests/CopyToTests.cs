@@ -1,10 +1,7 @@
 using System;
-using System.Collections.Immutable;
 using System.Threading.Tasks;
 using DataFlowAnalysisPOC.Analyzers;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Diagnostics;
+using DataFlowAnalysisPOC.Tests.Utils;
 using NUnit.Framework;
 
 namespace DataFlowAnalysisPOC.Tests
@@ -33,18 +30,12 @@ namespace TestCases
         }
     }
 }";
-            var compilation = CreateCompilation(CSharpSyntaxTree.ParseText(code));
+            var compilation = CompilationBuilder.Create(code, new CopyAnalyzer());
 
             foreach (var diagnostic in await compilation.GetAllDiagnosticsAsync())
             {
                 Console.WriteLine(diagnostic.GetMessage());
             }
         }
-
-        private static CompilationWithAnalyzers CreateCompilation(SyntaxTree syntaxTree) =>
-            CSharpCompilation.Create("CopyAnalysisPOC", options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary))
-                             .AddSyntaxTrees(syntaxTree)
-                             .AddReferences(MetadataReference.CreateFromFile(typeof(string).Assembly.Location))
-                             .WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(new CopyAnalyzer()));
     }
 }

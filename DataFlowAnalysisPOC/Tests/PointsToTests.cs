@@ -1,13 +1,10 @@
 using System;
-using System.Collections.Immutable;
 using System.Threading.Tasks;
 using DataFlowAnalysisPOC.Analyzers;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Diagnostics;
+using DataFlowAnalysisPOC.Tests.Utils;
 using NUnit.Framework;
 
-namespace DataFlowAnalysisPOC
+namespace DataFlowAnalysisPOC.Tests
 {
     public class PointsToTests
     {
@@ -37,7 +34,7 @@ namespace TestCases
     public class One {}
     public class Two : One {}
 }";
-            var compilation = CreateCompilation(CSharpSyntaxTree.ParseText(code));
+            var compilation = CompilationBuilder.Create(code, new PointsToAnalyzer());
 
             foreach (var diagnostic in await compilation.GetAllDiagnosticsAsync())
             {
@@ -69,7 +66,7 @@ namespace TestCases
         public void Bar(Clazz x) {}
     }
 }";
-            var compilation = CreateCompilation(CSharpSyntaxTree.ParseText(code));
+            var compilation = CompilationBuilder.Create(code, new PointsToAnalyzer());
 
             foreach (var diagnostic in await compilation.GetAllDiagnosticsAsync())
             {
@@ -100,7 +97,7 @@ namespace TestCases
         public void Foo(Clazz x) {}
     }
 }";
-            var compilation = CreateCompilation(CSharpSyntaxTree.ParseText(code));
+            var compilation = CompilationBuilder.Create(code, new PointsToAnalyzer());
 
             foreach (var diagnostic in await compilation.GetAllDiagnosticsAsync())
             {
@@ -127,18 +124,12 @@ namespace TestCases
         public void Bar(int x) {}
     }
 }";
-            var compilation = CreateCompilation(CSharpSyntaxTree.ParseText(code));
+            var compilation = CompilationBuilder.Create(code, new PointsToAnalyzer());
 
             foreach (var diagnostic in await compilation.GetAllDiagnosticsAsync())
             {
                 Console.WriteLine(diagnostic.GetMessage());
             }
         }
-
-        private static CompilationWithAnalyzers CreateCompilation(SyntaxTree syntaxTree) =>
-            CSharpCompilation.Create("PointsToTestsPOC", options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary))
-                             .AddSyntaxTrees(syntaxTree)
-                             .AddReferences(MetadataReference.CreateFromFile(typeof(string).Assembly.Location))
-                             .WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(new PointsToAnalyzer()));
     }
 }
