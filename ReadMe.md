@@ -54,6 +54,27 @@ Dataflow analysis to track values assigned to one or more properties of an objec
 
 Currently the API is internal and cannot be used outside `roslyn-analyzers`.
 
+## Value Content Analysis
+
+Dataflow analysis to track possible constant values that might be stored in an AnalysisEntity and IOperation instances. This is identical to constant propagation for constant values stored in non-constant symbols.
+
+Consider the following example:
+```
+int c1 = 0;
+int c2 = 0;
+int c3 = c1 + c2;
+```
+
+`ValueContentAnalysis` will compute that variables `c1`, `c2` and `c3` have identical `ValueContentAbstractValue` with a single literal value `0`.
+
+Consider the following example:
+```
+var c = flag == 1 ? ""a"" : ""b"";
+var d = c;
+```
+
+`ValueContentAnalysis` will compute that `flag == 1 ? "a" : "b"` and variables `d` and `c` have identical `ValueContentAbstractValue` with multiple literal values `"a"` and `"b"`.
+
 ## References
 
 [Well-known flow analyses](https://github.com/dotnet/roslyn-analyzers/blob/master/docs/Writing%20dataflow%20analysis%20based%20analyzers.md#well-known-flow-analyses)
